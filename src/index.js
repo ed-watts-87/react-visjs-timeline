@@ -56,15 +56,18 @@ export default class Timeline extends Component {
   shouldComponentUpdate(nextProps) {
     const {
       items,
+      groups,
       options,
       customTimes
     } = this.props
 
     const itemsChange = items !== nextProps.items
+    const groupsChange = groups !== nextProps.groups
     const optionsChange = options !== nextProps.options
     const customTimesChange = customTimes !== nextProps.customTimes
 
     return itemsChange ||
+      groupsChange ||
       optionsChange ||
       customTimesChange
   }
@@ -79,15 +82,21 @@ export default class Timeline extends Component {
 
     const {
       items,
+      groups,
       options,
       customTimes,
       animate = true,
     } = this.props
 
+    const groupItems = new vis.DataSet(groups)
     const timelineItems = new vis.DataSet(items)
     const timelineExists = !!$el
 
     if (timelineExists) {
+      if (groups.length > 0){
+        $el.setGroups(groupItems)
+      }
+
       $el.setItems(timelineItems)
 
       let updatedOptions
@@ -102,7 +111,12 @@ export default class Timeline extends Component {
       $el.setOptions(updatedOptions)
 
     } else {
-      $el = this.TimelineElement = new vis.Timeline(container, timelineItems, options)
+      $el = this.TimelineElement = new vis.Timeline(container);
+      $el.setOptions(options);
+      if (groups.length > 0){
+        $el.setGroups(groupItems)
+      }
+      $el.setItems(timelineItems);
 
       events.forEach(event => {
         $el.on(event, this.props[`${event}Handler`])
@@ -141,6 +155,7 @@ export default class Timeline extends Component {
 
 Timeline.propTypes = assign({
   items: PropTypes.array,
+  groups: PropTypes.array,
   options: PropTypes.object,
   customTimes: PropTypes.shape({
     datetime: PropTypes.instanceOf(Date),
@@ -154,6 +169,7 @@ Timeline.propTypes = assign({
 
 Timeline.defaultProps = assign({
   items: [],
+  groups: [],
   options: {},
   customTimes: {},
 }, eventDefaultProps)
