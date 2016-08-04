@@ -65,6 +65,30 @@ const items = [{
 />
 ```
 
+## Groups
+
+Groups follow the exact same for format as they do in vis.js. See the [vis.js documentation](http://visjs.org/docs/timeline/#groups) for more information.
+
+```
+const groups = [{
+  id: 1,
+  content: 'group'
+}]
+
+const items = [{
+  start: new Date(2010, 7, 15),
+  end: new Date(2010, 8, 2),  // end is optional
+  content: 'Trajectory A',
+  group: 1,
+}]
+
+<Timeline
+  options={options}
+  groups={groups}
+  items={items}
+/>
+```
+
 ## Custom Times
 
 Custom Times are defined more declaritively in the component, via the `customTimes` prop. You define them via a simple object where the key is the `id` of the custom time and the value is the datetime:
